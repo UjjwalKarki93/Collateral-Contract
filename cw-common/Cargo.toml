@@ -1,0 +1,26 @@
+[package]
+name = "cw-common"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+bech32 = "0.9.1"
+bytes = "1.4.0"
+cosmwasm-schema = "1.2.7"
+cosmwasm-std = "1.2.6"
+cw-storage-plus = "1.1.0"
+hex = "0.4.3"
+regex = "1.9.0"
+rlp = "0.5.2"
+serde = { version = "1.0.154", default-features = false, features = ["derive"] }
+
+
+
+
+

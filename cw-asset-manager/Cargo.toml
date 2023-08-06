@@ -1,0 +1,64 @@
+[package]
+name = "cw-asset-manager"
+version = "0.1.0"
+authors = ["Night Owl <nightowl121@protonmail.com>"]
+edition = "2021"
+
+exclude = [
+  # Those files are rust-optimizer artifacts. You might want to commit them for convenience but they should not be part of the source code publication.
+  "contract.wasm",
+  "hash.txt",
+]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+# for more explicit tests, cargo test --features=backtraces
+backtraces = ["cosmwasm-std/backtraces"]
+# use library feature to disable all instantiate/execute/query exports
+library = []
+
+[package.metadata.scripts]
+optimize = """docker run --rm -v "$(pwd)":/code \
+  --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
+  --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+  cosmwasm/rust-optimizer:0.12.10
+"""
+
+[dependencies]
+cosmwasm-schema = "1.2.6"
+cosmwasm-std = "1.2.6"
+cosmwasm-storage = "1.2.6"
+cw-storage-plus = "1.0.1"
+cw2 = "1.0.1"
+schemars = "0.8.12"
+serde = { version = "1.0.163", default-features = false, features = ["derive"] }
+thiserror = { version = "1.0.40" }
+cw-common = { path = "../../cw-common" }
+cw20 = "1.0.1"
+rlp = "0.5.2"
+cw-utils = "1.0.1"
+debug_print = {workspace=true}
+
+
+[dev-dependencies]
+cw-multi-test = "0.16.4"
+cw20-base = "1.0.1"
+cw-xcall-lib={package="cw-xcall-lib", git="https://github.com/icon-project/xCall.git", branch="main"}
+cw-xcall-multi = {package="cw-xcall", git="https://github.com/icon-project/xCall.git", branch="main"}
+cw-common-ibc = { git = "https://github.com/knowiss/IBC-Integration", package = "cw-common" }
+cw_xcall_ibc_connection = { git =  "https://github.com/knowiss/IBC-Integration", package = "cw-xcall-ibc-connection" }
+
+[profile.release]
+# Do not perform backtrace for panic on release builds.
+panic = 'abort'
+# Perform optimizations on all codegen units.
+codegen-units = 1
+# Optimize for size.
+opt-level = 'z' # or 'z' to optimize "aggressively" for size
+# Enable link time optimization.
+lto = true
+strip = true
